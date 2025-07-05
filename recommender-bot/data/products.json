@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Plant-Based Protein Cookies",
+    "category": "food",
+    "price": 299,
+    "tags": ["vegan", "protein", "cookies", "snacks"],
+    "description": "Gluten-free vegan cookies with 12g plant protein per serving."
+  },
+  {
+    "name": "Quinoa Energy Bites",
+    "category": "food",
+    "price": 249,
+    "tags": ["vegan", "superfood", "snack", "quinoa", "dates", "coconut"],
+    "description": "Vegan superfood bites made with quinoa, dates, and coconut for natural sweetness."
+  },
+  {
+    "name": "Oats & Chia Seed Bars",
+    "category": "food",
+    "price": 349,
+    "tags": ["breakfast", "protein", "oats", "chia", "vegan"],
+    "description": "Plant-based breakfast bars with 15g protein, oats, and chia for an energetic start."
+  },
+  {
+    "name": "Handblock Print Kurta",
+    "category": "fashion",
+    "price": 1499,
+    "tags": ["ethnic", "cotton", "kurta", "summer", "traditional"],
+    "description": "100% cotton handblock print kurta perfect for traditional summer occasions."
+  },
+  {
+    "name": "Oversized Cotton Tee",
+    "category": "fashion",
+    "price": 799,
+    "tags": ["casual", "cotton", "tshirt", "oversized", "trendy"],
+    "description": "Trendy oversized fit T-shirt in breathable cotton, ideal for casual outings."
+  },
+  {
+    "name": "Floral Chiffon Saree",
+    "category": "fashion",
+    "price": 1999,
+    "tags": ["ethnic", "summer", "lightweight", "saree"],
+    "description": "Lightweight chiffon saree with floral print, ideal for elegant summer events."
+  },
+  {
+    "name": "High Protein Moong Chilla Mix",
+    "category": "food",
+    "price": 199,
+    "tags": ["protein", "breakfast", "vegan", "healthy"],
+    "description": "Instant mix to make protein-rich moong chilla, perfect for quick healthy breakfast."
+  },
+  {
+    "name": "Cotton Straight Pants",
+    "category": "fashion",
+    "price": 699,
+    "tags": ["casual", "pants", "cotton", "comfortable"],
+    "description": "Breathable cotton straight pants for daily casual or office wear."
+  }
+]
