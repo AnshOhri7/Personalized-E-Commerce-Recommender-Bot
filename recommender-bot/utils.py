@@ -1,11 +1,18 @@
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 from serpapi import GoogleSearch
-import os
+import google.generativeai as genai
 import json
 
+# Load sentence transformer model
 model = SentenceTransformer('all-MiniLM-L6-v2')
-SERP_API_KEY = os.getenv("SERPAPI_KEY", "0e51dd65f52e130c8df9cf71b6bf0ef9495e255422837061d0b6c9192eaf2254")
+
+# API Keys
+SERP_API_KEY = "0e51dd65f52e130c8df9cf71b6bf0ef9495e255422837061d0b6c9192eaf2254"
+GEMINI_API_KEY = "AIzaSyDOJcwmzHZfK8l77jgn1mpQVApunyY5zxQ"
+
+# Configure Gemini
+genai.configure(api_key=GEMINI_API_KEY)
 
 def load_products(filepath="data/products.json"):
     with open(filepath, "r") as f:
@@ -34,21 +41,27 @@ def recommend_products(user_query, products, top_k=2):
     ]
 
 def generate_reason(user_query, product):
-    reasons = []
-    if "vegan" in user_query:
-        reasons.append("vegan-friendly")
-    if "protein" in user_query:
-        reasons.append("high in protein")
-    if "summer" in user_query or "light" in user_query:
-        reasons.append("ideal for summer")
-    if f"₹{product['price']}" in user_query or "under" in user_query:
-        reasons.append(f"under your ₹{product['price']} budget")
-    if "casual" in user_query:
-        reasons.append("great for casual wear")
+    try:
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        prompt = f"""
+        You are a helpful Indian shopping assistant.
 
-    if reasons:
-        return f"This product is {', '.join(reasons)} — {product['description']}"
-    else:
+        User Query: "{user_query}"
+
+        Product:
+        Name: {product['name']}
+        Description: {product['description']}
+        Price: ₹{product['price']}
+
+        Explain in 1–2 sentences why this product is a perfect recommendation for the user.
+        Be clear, friendly, and relevant to the user's intent.
+        """
+
+        response = model.generate_content(prompt)
+        return response.text.strip()
+
+    except Exception as e:
+        # Fallback explanation
         return f"Matches your query — {product['description']}"
 
 def fetch_live_products(query, num_results=3):
@@ -78,3 +91,34 @@ def fetch_live_products(query, num_results=3):
             "thumbnail": item.get("thumbnail")
         })
     return products
+
+def generate_reason_for_live_product(user_query, product):
+    try:
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        prompt = f"""
+            You are a helpful Indian fashion and lifestyle assistant.
+
+            Here is a user's product search query:
+            "{user_query}"
+
+            Here is a product you found:
+            Title: {product.get('title')}
+            Price: {product.get('price')}
+            Sold on: {product.get('source')}
+
+            Based on the user's request, explain in 1-2 short sentences **why this product fits their needs**. Focus on attributes like:
+            - Style (formal/casual/festive)
+            - Fabric (machine-washable, breathable, sweat-resistant)
+            - Price match
+            - Occasion fit (workwear, summer use, etc.)
+            - Any premium or useful feature inferred from the title
+
+            Don't repeat the title — instead, summarize how it helps the user.
+                    """
+
+        response = model.generate_content(prompt)
+        return response.text.strip() if response.text else "No explanation generated."
+
+    except Exception as e:
+        print(f"Error generating reason: {e}")
+        return "Sorry, could not generate reason at this time."
