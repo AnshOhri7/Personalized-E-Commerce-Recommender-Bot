@@ -1,8 +1,11 @@
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+from serpapi import GoogleSearch
+import os
 import json
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
+SERP_API_KEY = os.getenv("SERPAPI_KEY", "0e51dd65f52e130c8df9cf71b6bf0ef9495e255422837061d0b6c9192eaf2254")
 
 def load_products(filepath="data/products.json"):
     with open(filepath, "r") as f:
@@ -48,3 +51,30 @@ def generate_reason(user_query, product):
     else:
         return f"Matches your query — {product['description']}"
 
+def fetch_live_products(query, num_results=3):
+    if not SERP_API_KEY:
+        return []
+
+    params = {
+        "engine": "google",
+        "q": query,
+        "tbm": "shop",
+        "api_key": SERP_API_KEY,
+        "gl": "in",
+        "hl": "en",
+        "num": num_results
+    }
+
+    search = GoogleSearch(params)
+    results = search.get_dict()
+
+    products = []
+    for item in results.get("shopping_results", [])[:num_results]:
+        products.append({
+            "title": item.get("title"),
+            "link": item.get("link"),
+            "price": item.get("price"),
+            "source": item.get("source"),
+            "thumbnail": item.get("thumbnail")
+        })
+    return products
